@@ -3,7 +3,7 @@
     import { Toaster } from "$lib/components/ui/sonner/index";
 	let { children } = $props();
 </script>
-<Toaster />
+<Toaster duration={10000000000000} />
 <!-- <div>
 	<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
 	<input type="email" name="email" required 

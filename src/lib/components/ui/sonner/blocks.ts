@@ -1,12 +1,12 @@
 import { toast } from "svelte-sonner"
 const toastStyles = {
     success: {
-        toast: 'bg-green-400',
-        title: 'text-green-400 text-2xl',
-        description: 'bg-black',
-        actionButton: 'bg-zinc-400',
-        cancelButton: 'bg-orange-400',
-        closeButton: 'bg-lime-400'
+        toast: 'bg-black',
+        title: 'text-green-400 text-2xl', // Change title css
+        description: 'text-red-400', // Change description css
+        // actionButton: 'bg-zinc-400',
+        // cancelButton: 'bg-orange-400',
+        // closeButton: 'bg-lime-400'
     },
     error: {
         toast: 'bg-red-400',
