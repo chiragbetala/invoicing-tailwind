@@ -46,4 +46,4 @@ export {
 	type Props as ButtonProps,
 	type Events as ButtonEvents,
 	buttonVariants,
-};
+}
