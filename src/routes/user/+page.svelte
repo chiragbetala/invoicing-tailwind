@@ -3,7 +3,8 @@
     import * as Pagination from "$lib/components/ui/pagination";
     import * as Accordion from "$lib/components/ui/accordion/index";
     import * as Card from "$lib/components/ui/card/index.js";
-  import * as Carousel from "$lib/components/ui/carousel/index.js";
+    import * as Carousel from "$lib/components/ui/carousel/index.js";
+    import Tags from "svelte-tags-input";
     import { type PageData } from './$types';
 
     const { data } = $props<{ data: PageData }>();
@@ -18,9 +19,63 @@
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     ));
+
+    // Tags input configuration
+    interface User {
+        first_name: string;
+        last_name: string;
+        email: string;
+        phone: string;
+    }
+    let tags = $state<string[]>([]);
+    let inputValue = $state('');
+    const userSuggestions = data.users.map((user: User) => `${user.first_name} ${user.last_name}`);
+
+    function onBeforeAdd(event: CustomEvent) {
+        const value = event.detail.tag.trim();
+        const isValid = userSuggestions.includes(value);
+        if (!isValid) {
+            event.preventDefault();
+        }
+        return isValid;
+    }
+
+    function onTagAdd(event: CustomEvent) {
+        tags = event.detail.tags;
+        inputValue = '';
+    }
+
+    function onInput(event: CustomEvent) {
+        inputValue = event.detail.value;
+    }
 </script>
 
 <div class="container mx-auto py-10">
+    <div class="mb-6 w-full sm:max-w-[70%]">
+        <h3 class="mb-2 text-lg font-semibold">Select Users</h3>
+        <div class="tags-container">
+            <Tags 
+                bind:tags
+                bind:value={inputValue}
+                on:tags={onTagAdd}
+                on:beforeAdd={onBeforeAdd}
+                on:input={onInput}
+                placeholder="Search and select users..."
+                allowPaste={false}
+                onlyUnique={true}
+                suggestions={userSuggestions.filter((s: string) => 
+                    s.toLowerCase().includes(inputValue.toLowerCase()) && 
+                    !tags.includes(s)
+                )}
+                addKeys={[13]}
+                minChars={1}
+                saveOnBlur={false}
+                allowBlur={false}
+                class="tags-input"
+            />
+        </div>
+    </div>
+
     <Accordion.Root type="single" class="w-full sm:max-w-[70%]">
         <Accordion.Item value="item-1">
           <Accordion.Trigger>Is it accessible?</Accordion.Trigger>
@@ -112,3 +167,38 @@
         </Pagination.Root>
     </div>
 </div>
+
+<style>
+    :global(.tags-container .svelte-tags-input-layout) {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+    }
+
+    :global(.tags-container .svelte-tags-input) {
+        min-height: 40px;
+    }
+
+    :global(.tags-container .svelte-tags-input-tag) {
+        background: #e2e8f0;
+        border-radius: 0.25rem;
+        padding: 2px 8px;
+        margin: 2px;
+    }
+
+    :global(.tags-container .svelte-tags-input-layout .suggestions) {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-top: none;
+        border-radius: 0 0 0.375rem 0.375rem;
+    }
+
+    :global(.tags-container .svelte-tags-input-layout .suggestions li) {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    :global(.tags-container .svelte-tags-input-layout .suggestions li:hover) {
+        background: #f7fafc;
+    }
+</style>
